@@ -5,16 +5,38 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UseWPF>true</UseWPF>
     <ApplicationIcon>images\Icon.ico</ApplicationIcon>
+    <StartupObject>GameLauncher.App</StartupObject>
   </PropertyGroup>
 
   <ItemGroup>
     <None Remove="images\Icon.ico" />
-    <None Remove="images\LauncherBackground.png" />
+	<None Remove="images\AltronixEngineLogo.png" />
+	<None Remove="images\LauncherBackground.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Octokit" Version="5.0.0" />
+    <PackageReference Include="WinCopies.WindowsAPICodePack.Shell" Version="2.12.0.2" />
   </ItemGroup>
 
   <ItemGroup>
     <Resource Include="images\Icon.ico" />
-    <Resource Include="images\LauncherBackground.png" />
+	<Resource Include="images\AltronixEngineLogo.png" />
+	<Resource Include="images\LauncherBackground.png" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="Properties\Settings.Designer.cs">
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>	
 </Project>

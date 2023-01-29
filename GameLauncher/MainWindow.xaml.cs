@@ -1,10 +1,17 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Net;
 using System.Windows;
+using Microsoft.WindowsAPICodePack.Dialogs;
+using Microsoft.WindowsAPICodePack.PortableDevices.PropertySystem;
+using System.Configuration;
+using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
+using System.Windows.Controls;
 
 namespace GameLauncher
 {
@@ -57,10 +64,15 @@ namespace GameLauncher
         {
             InitializeComponent();
 
-            rootPath = Directory.GetCurrentDirectory();
+            if (Properties.Settings.Default.instalationPath == "C:\\")
+            {
+                selectPath();
+            }
+            PathTextBox.Text = (string)Properties.Settings.Default.instalationPath;
+            rootPath = (string)Properties.Settings.Default.instalationPath;
             versionFile = Path.Combine(rootPath, "Version.txt");
-            gameZip = Path.Combine(rootPath, "Build.zip");
-            gameExe = Path.Combine(rootPath, "Build", "Pirate Game.exe");
+            gameZip = Path.Combine(rootPath, "Engine.zip");
+            gameExe = Path.Combine(rootPath, "Altronix Engine.exe");
         }
 
         private void CheckForUpdates()
@@ -73,7 +85,7 @@ namespace GameLauncher
                 try
                 {
                     WebClient webClient = new WebClient();
-                    Version onlineVersion = new Version(webClient.DownloadString("https://drive.google.com/uc?export=download&id=1R3GT_VINzmNoXKtvnvuJw6C86-k3Jr5s"));
+                    Version onlineVersion = new Version(GitHubUtil.getLastReleaseVersion());
 
                     if (onlineVersion.IsDifferentThan(localVersion))
                     {
@@ -87,7 +99,7 @@ namespace GameLauncher
                 catch (Exception ex)
                 {
                     Status = LauncherStatus.failed;
-                    MessageBox.Show($"Error checking for game updates: {ex}");
+                    System.Windows.MessageBox.Show($"Error checking for game updates: {ex}");
                 }
             }
             else
@@ -108,16 +120,16 @@ namespace GameLauncher
                 else
                 {
                     Status = LauncherStatus.downloadingGame;
-                    _onlineVersion = new Version(webClient.DownloadString("https://drive.google.com/uc?export=download&id=1R3GT_VINzmNoXKtvnvuJw6C86-k3Jr5s"));
+                    _onlineVersion = new Version(GitHubUtil.getLastReleaseVersion());
                 }
 
                 webClient.DownloadFileCompleted += new AsyncCompletedEventHandler(DownloadGameCompletedCallback);
-                webClient.DownloadFileAsync(new Uri("https://drive.google.com/uc?export=download&id=1SNA_3P5wVp4tZi5NKhiGAAD6q4ilbaaf"), gameZip, _onlineVersion);
+                webClient.DownloadFileAsync(new Uri(GitHubUtil.getLastReleaseAssetUrl()), gameZip, _onlineVersion);
             }
             catch (Exception ex)
             {
                 Status = LauncherStatus.failed;
-                MessageBox.Show($"Error installing game files: {ex}");
+                System.Windows.MessageBox.Show($"Error installing game files: {ex}");
             }
         }
 
@@ -137,7 +149,7 @@ namespace GameLauncher
             catch (Exception ex)
             {
                 Status = LauncherStatus.failed;
-                MessageBox.Show($"Error finishing download: {ex}");
+                System.Windows.MessageBox.Show($"Error finishing download: {ex}");
             }
         }
 
@@ -151,7 +163,7 @@ namespace GameLauncher
             if (File.Exists(gameExe) && Status == LauncherStatus.ready)
             {
                 ProcessStartInfo startInfo = new ProcessStartInfo(gameExe);
-                startInfo.WorkingDirectory = Path.Combine(rootPath, "Build");
+                startInfo.WorkingDirectory = rootPath;
                 Process.Start(startInfo);
 
                 Close();
@@ -161,9 +173,29 @@ namespace GameLauncher
                 CheckForUpdates();
             }
         }
+
+        private void FolderButton_Click(object sender, RoutedEventArgs e)
+        {
+            rootPath = selectPath();
+        }
+
+        private string selectPath()
+        {
+            var dialog = new System.Windows.Forms.FolderBrowserDialog();
+            dialog.UseDescriptionForTitle = true;
+            dialog.Description = "Select the directory where you want to install the engine";
+            System.Windows.Forms.DialogResult result = dialog.ShowDialog();
+            if (result == System.Windows.Forms.DialogResult.OK)
+            {
+                Properties.Settings.Default.instalationPath = dialog.SelectedPath;
+                Properties.Settings.Default.Save();
+                PathTextBox.Text = dialog.SelectedPath;
+            }
+            return dialog.SelectedPath;
+        }
     }
 
-    struct Version
+struct Version
     {
         internal static Version zero = new Version(0, 0, 0);
 

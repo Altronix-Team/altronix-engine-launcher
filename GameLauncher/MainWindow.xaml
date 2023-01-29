@@ -10,7 +10,12 @@
         Title="Launcher" Height="576" Width="1080">
     <Grid>
         <Image Stretch="UniformToFill" Source="images/LauncherBackground.png"/>
+        <Image Stretch="Uniform" Source="images/AltronixEngineLogo.png" Margin="202,10,202,190"/>
         <TextBlock Name="VersionText" VerticalAlignment="Bottom" HorizontalAlignment="Right" FontSize="20" Foreground="White" Margin="0, 0, 5, 0"/>
-        <Button Name="PlayButton" Content="Checking For Updates" Click="PlayButton_Click" Height="60" FontSize="28" FontWeight="Bold" Foreground="#DDFFFFFF" Margin="0, 0, 0, 15" VerticalAlignment="Bottom" HorizontalAlignment="Center" MinWidth="150" Background="#FFFF9700" Padding="10,1,10,1"/>
+        <Button Name="PlayButton" Content="Checking For Updates" Click="PlayButton_Click" Height="60" FontSize="28" FontWeight="Bold" Foreground="#DDFFFFFF" Margin="0,370,0,0" VerticalAlignment="Top" HorizontalAlignment="Center" MinWidth="150" Background="#FFFF9700" Padding="10,1,10,1"/>
+        <Button Name="FolderButton" Content="Select instalation folder" Click="FolderButton_Click" Height="60" FontSize="28" FontWeight="Bold" Foreground="#DDFFFFFF" Margin="623,0,74,27" VerticalAlignment="Bottom" MinWidth="150" Background="#FFFF9700" Padding="10,1,10,1" FontFamily="Cooper Black"/>
+        <Canvas HorizontalAlignment="Left" Height="38" Margin="66,460,0,0" VerticalAlignment="Top" Width="482" Background="Black">
+            <TextBlock x:Name="PathTextBox" TextWrapping="Wrap" Text="TextBox" Width="474" Height="30" TextAlignment="Left" FontSize="16" OpacityMask="Black" Foreground="Black" Background="White" HorizontalAlignment="Center" Canvas.Left="4" Canvas.Top="4" VerticalAlignment="Center" />
+        </Canvas>
     </Grid>
 </Window>
